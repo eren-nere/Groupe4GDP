@@ -1,0 +1,94 @@
+.auth-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 10px 20px 20px 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.auth-button, .logout-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #0070f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.auth-button:disabled, .logout-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.logout-button {
+  background-color: #f44336;
+}
+
+.success-message {
+  padding: 10px;
+  background-color: #d4edda;
+  color: #155724;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  padding: 10px;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.profile-container {
+  text-align: left;
+}
+
+.profile-info {
+  margin-bottom: 20px;
+}
+
+.profile-form-container {
+  text-align: left;
+}
+
+.auth-switch {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.switch-button {
+  background: none;
+  border: none;
+  color: #0070f3;
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 5px;
+}
+
+.switch-button:hover {
+  color: #0056b3;
+}
