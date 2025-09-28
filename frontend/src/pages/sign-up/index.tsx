@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 
 const SignUpPage = () => {
   return (
-    <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
+    <Container maxWidth="sm" style={{ marginTop: '2rem', textAlign: 'center' }}>
       <img src={reactLogo} className="logo react" alt="React logo" />
       <h1>StudySwap</h1>
       <p>Ceci est la page d'inscription de l'application</p>

@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Paper, Typography } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import MapIcon from '@mui/icons-material/Map';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -42,6 +42,9 @@ const Layout = () => {
 
   return (
     <>
+      <Typography variant="h5" gutterBottom sx={{ float: 'right' }}>
+        Bonjour, Amélie
+      </Typography>
       <Outlet />
       <Paper
         sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}

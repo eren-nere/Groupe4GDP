@@ -1,10 +1,12 @@
 import { Button, Container, TextField, Typography } from '@mui/material';
 import reactLogo from '@assets/react.svg';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
   return (
-    <Container maxWidth="sm" style={{ marginTop: '2rem' }}>
+    <Container maxWidth="sm" style={{ marginTop: '2rem', textAlign: 'center' }}>
       <img src={reactLogo} className="logo react" alt="React logo" />
       <h1>StudySwap</h1>
       <p>Ceci est la page de connexion de l'application.</p>
@@ -28,6 +30,9 @@ const LoginPage = () => {
         color="primary"
         fullWidth
         style={{ marginTop: '1rem' }}
+        onClick={() => {
+          navigate('/feed');
+        }}
       >
         Se connecter
       </Button>
@@ -36,8 +41,7 @@ const LoginPage = () => {
         color="textSecondary"
         style={{ marginTop: '1rem' }}
       >
-        Vous n'avez pas de compte ?{" "}
-        <Link to="/sign-up">S'inscrire</Link>
+        Vous n'avez pas de compte ? <Link to="/sign-up">S'inscrire</Link>
       </Typography>
     </Container>
   );
