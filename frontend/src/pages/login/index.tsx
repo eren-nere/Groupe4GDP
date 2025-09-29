@@ -11,15 +11,21 @@ const LoginPage = () => {
       <h1>StudySwap</h1>
       <p>Ceci est la page de connexion de l'application.</p>
       <TextField
-        label="Email"
+        label="Nom"
         variant="outlined"
         fullWidth
         margin="dense"
         size="small"
       />
       <TextField
-        label="Mot de passe"
-        type="password"
+        label="Prénom"
+        variant="outlined"
+        fullWidth
+        margin="dense"
+        size="small"
+      />
+      <TextField
+        label="Addresse"
         variant="outlined"
         fullWidth
         margin="dense"

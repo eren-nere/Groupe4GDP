@@ -8,7 +8,7 @@ const SignUpPage = () => {
       <img src={reactLogo} className="logo react" alt="React logo" />
       <h1>StudySwap</h1>
       <p>Ceci est la page d'inscription de l'application</p>
-      <TextField
+      {/* <TextField
         label="Nom"
         variant="outlined"
         fullWidth
@@ -21,7 +21,7 @@ const SignUpPage = () => {
         fullWidth
         margin="dense"
         size="small"
-      />
+      /> */}
       <TextField
         label="Email"
         variant="outlined"
@@ -29,7 +29,7 @@ const SignUpPage = () => {
         margin="dense"
         size="small"
       />
-      <TextField
+      {/* <TextField
         label="Mot de passe"
         type="password"
         variant="outlined"
@@ -44,7 +44,7 @@ const SignUpPage = () => {
         fullWidth
         margin="dense"
         size="small"
-      />
+      /> */}
       <Button
         variant="contained"
         color="primary"
