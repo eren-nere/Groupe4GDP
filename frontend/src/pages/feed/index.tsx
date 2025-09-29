@@ -7,7 +7,7 @@ const MOCK_ANNOUNCES = 20;
 
 const FeedPage = () => {
   return [
-    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }} key="feed">
       <TextField
         size="small"
         placeholder="Recherche des announces"
@@ -30,6 +30,7 @@ const FeedPage = () => {
       </Box>
     </Box>,
     <Fab
+      key="fab"
       color="primary"
       aria-label="add"
       variant="extended"

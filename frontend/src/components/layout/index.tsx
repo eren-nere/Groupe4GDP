@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { BottomNavigation, BottomNavigationAction, Paper, Typography } from '@mui/material';
+import { BottomNavigation, BottomNavigationAction, Box, Paper, Typography } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import MapIcon from '@mui/icons-material/Map';
 import FavoriteIcon from '@mui/icons-material/Favorite';
@@ -41,7 +41,7 @@ const Layout = () => {
   }, []);
 
   return (
-    <>
+    <Box display="flex" flexDirection="column" height="100vh">
       <Typography variant="h5" gutterBottom sx={{ float: 'right' }}>
         Bonjour, Amélie
       </Typography>
@@ -66,7 +66,7 @@ const Layout = () => {
           ))}
         </BottomNavigation>
       </Paper>
-    </>
+    </Box>
   );
 };
 
