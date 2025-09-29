@@ -1,11 +1,30 @@
 import { Box, Paper, Typography } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
-import { FavoriteBorder } from '@mui/icons-material';
+import { FavoriteBorder, Favorite } from '@mui/icons-material';
+import type { FC } from 'react';
 
-const AnnounceCard = () => {
+const AnnounceCard: FC<Props> = ({ isFavorite }) => {
   return (
     <Paper sx={{ display: 'flex', p: 2, mb: 2, position: 'relative' }}>
-      <FavoriteBorder sx={{ position: "absolute", right: "10px", top: "10px", color: "grey" }} />
+      {isFavorite ? (
+        <Favorite
+          sx={{
+            position: 'absolute',
+            right: '10px',
+            top: '10px',
+            color: 'red',
+          }}
+        />
+      ) : (
+        <FavoriteBorder
+          sx={{
+            position: 'absolute',
+            right: '10px',
+            top: '10px',
+            color: 'grey',
+          }}
+        />
+      )}
       <Box>
         <img
           src="https://cf.bstatic.com/xdata/images/hotel/max1024x768/579650108.jpg?k=c84863f9293252729677f8252bfa999d927a0a4779d337b1a5f4bb87ec872050&o=&hp=1"
@@ -40,6 +59,10 @@ const AnnounceCard = () => {
       </Box>
     </Paper>
   );
+};
+
+type Props = {
+  isFavorite?: boolean;
 };
 
 export default AnnounceCard;
