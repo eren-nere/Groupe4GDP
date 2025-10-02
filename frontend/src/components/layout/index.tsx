@@ -40,7 +40,7 @@ const Layout = () => {
       {
         label: 'Messages',
         icon: <ChatBubbleOutline />,
-        to: '#',
+        to: 'messages',
       },
       {
         label: 'Profile',

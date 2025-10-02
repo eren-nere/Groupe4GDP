@@ -6,6 +6,7 @@ import FeedPage from '@pages/feed';
 import Layout from '@components/layout';
 import FavoritesPage from '@pages/favorites';
 import ProfilePage from '@pages/profile';
+import MessagesPage from '@pages/messages';
 
 const AppRoutes = () => {
   return (
@@ -16,6 +17,7 @@ const AppRoutes = () => {
       <Route element={<Layout />}>
         <Route path="feed" element={<FeedPage />} />
         <Route path="favorites" element={<FavoritesPage />} />
+        <Route path="messages" element={<MessagesPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
     </Routes>
