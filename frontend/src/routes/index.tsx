@@ -4,7 +4,6 @@ import LoginPage from '@pages/login';
 import SignUpPage from '@pages/sign-up';
 import FeedPage from '@pages/feed';
 import Layout from '@components/layout';
-import MapPage from '@pages/map';
 import FavoritesPage from '@pages/favorites';
 import ProfilePage from '@pages/profile';
 
@@ -16,7 +15,6 @@ const AppRoutes = () => {
       <Route path="sign-up" element={<SignUpPage />} />
       <Route element={<Layout />}>
         <Route path="feed" element={<FeedPage />} />
-        <Route path="map" element={<MapPage />} />
         <Route path="favorites" element={<FavoritesPage />} />
         <Route path="profile" element={<ProfilePage />} />
       </Route>
