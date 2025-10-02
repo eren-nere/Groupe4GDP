@@ -1,10 +1,20 @@
 import { useCallback, useMemo } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router';
-import { BottomNavigation, BottomNavigationAction, Box, Paper, Typography } from '@mui/material';
-import HomeIcon from '@mui/icons-material/Home';
-import MapIcon from '@mui/icons-material/Map';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import PersonIcon from '@mui/icons-material/Person';
+import {
+  BottomNavigation,
+  BottomNavigationAction,
+  Box,
+  Paper,
+  Typography,
+} from '@mui/material';
+
+import {
+  HomeOutlined,
+  PersonOutline,
+  FavoriteBorder,
+  AddCircleOutline,
+  ChatBubbleOutline,
+} from '@mui/icons-material';
 
 const Layout = () => {
   const location = useLocation();
@@ -14,22 +24,27 @@ const Layout = () => {
     () => [
       {
         label: 'Acceuil',
-        icon: <HomeIcon />,
+        icon: <HomeOutlined />,
         to: 'feed',
       },
       {
-        label: 'Carte',
-        icon: <MapIcon />,
-        to: 'map',
-      },
-      {
         label: 'Favorites',
-        icon: <FavoriteIcon />,
+        icon: <FavoriteBorder />,
         to: 'favorites',
       },
       {
+        label: 'Ajouter',
+        icon: <AddCircleOutline />,
+        to: 'add',
+      },
+      {
+        label: 'Messages',
+        icon: <ChatBubbleOutline />,
+        to: '#',
+      },
+      {
         label: 'Profile',
-        icon: <PersonIcon />,
+        icon: <PersonOutline />,
         to: 'profile',
       },
     ],
@@ -37,6 +52,7 @@ const Layout = () => {
   );
 
   const handleNavigate = useCallback((_: any, to: string) => {
+    if( to === 'add') return;
     navigate(to);
   }, []);
 
