@@ -14,7 +14,7 @@ const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 const MOCK_ANNOUNCES = 20;
 
 const FeedPage = () => {
-  const [viewType, setViewType] = useState<'list' | 'map'>('map');
+  const [viewType, setViewType] = useState<'list' | 'map'>('list');
 
   return [
     <Box
