@@ -52,15 +52,12 @@ const Layout = () => {
   );
 
   const handleNavigate = useCallback((_: any, to: string) => {
-    if( to === 'add') return;
+    if (to === 'add') return;
     navigate(to);
   }, []);
 
   return (
     <Box display="flex" flexDirection="column" height="100vh">
-      <Typography variant="h5" gutterBottom sx={{ float: 'right' }}>
-        Bonjour, Amélie
-      </Typography>
       <Outlet />
       <Paper
         sx={{ position: 'fixed', bottom: 0, left: 0, right: 0 }}

@@ -7,6 +7,7 @@ import Layout from '@components/layout';
 import FavoritesPage from '@pages/favorites';
 import ProfilePage from '@pages/profile';
 import MessagesPage from '@pages/messages';
+import AnnounceDetails from '@pages/announce-details';
 
 const AppRoutes = () => {
   return (
@@ -19,6 +20,7 @@ const AppRoutes = () => {
         <Route path="favorites" element={<FavoritesPage />} />
         <Route path="messages" element={<MessagesPage />} />
         <Route path="profile" element={<ProfilePage />} />
+        <Route path="announce-details" element={<AnnounceDetails />} />
       </Route>
     </Routes>
   );

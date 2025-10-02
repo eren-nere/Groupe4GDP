@@ -2,10 +2,15 @@ import { Box, Paper, Typography } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import { FavoriteBorder, Favorite } from '@mui/icons-material';
 import type { FC } from 'react';
+import { useNavigate } from 'react-router';
 
 const AnnounceCard: FC<Props> = ({ isFavorite }) => {
+  const navigate = useNavigate();
+
   return (
-    <Paper sx={{ display: 'flex', p: 2, mb: 2, position: 'relative' }}>
+    <Paper sx={{ display: 'flex', p: 2, mb: 2, position: 'relative' }} onClick={() => {
+      navigate('/announce-details');
+    }}>
       {isFavorite ? (
         <Favorite
           sx={{
@@ -38,8 +43,8 @@ const AnnounceCard: FC<Props> = ({ isFavorite }) => {
         />
       </Box>
       <Box>
-        <Typography variant="h6">T2 à Lyon centre</Typography>
-        <Typography variant="body2">Disponibilité : 22/09 à 10/10</Typography>
+        <Typography variant="h6">Studio à Confluence</Typography>
+        <Typography variant="body2">Disponible du 22/09/2025 au 10/10/2025</Typography>
         <Typography variant="caption">Posté il y a 2 heures</Typography>
         <Typography
           variant="body1"
