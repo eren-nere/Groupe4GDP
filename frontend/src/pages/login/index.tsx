@@ -1,5 +1,5 @@
 import { Button, Container, TextField, Typography } from '@mui/material';
-import reactLogo from '@assets/react.svg';
+import logo from '@assets/logo.svg';
 import { Link, useNavigate } from 'react-router';
 
 const LoginPage = () => {
@@ -7,7 +7,7 @@ const LoginPage = () => {
 
   return (
     <Container maxWidth="sm" style={{ marginTop: '2rem', textAlign: 'center' }}>
-      <img src={reactLogo} className="logo react" alt="React logo" />
+      <img src={logo} className="logo react" alt="React logo" />
       <h1>StudySwap</h1>
       <p>Ceci est la page de connexion de l'application.</p>
       <TextField
