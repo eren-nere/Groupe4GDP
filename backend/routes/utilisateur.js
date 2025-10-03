@@ -3,6 +3,33 @@ const { supabase } = require('../supabaseClient');
 
 const router = express.Router();
 
+// Middleware d'authentification
+const authenticateToken = async (req, res, next) => {
+  if (!supabase) {
+    return res.status(500).json({ error: 'Supabase non configuré' });
+  }
+  
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+  
+  if (!token) {
+    return res.status(401).json({ error: 'Token d\'authentification manquant' });
+  }
+  
+  try {
+    const { data, error } = await supabase.auth.getUser(token);
+    if (error) {
+      return res.status(401).json({ error: 'Token invalide: ' + error.message });
+    }
+    
+    // Ajouter les informations utilisateur à la requête
+    req.user = data.user;
+    next();
+  } catch (err) {
+    return res.status(401).json({ error: 'Erreur de vérification du token' });
+  }
+};
+
 /**
  * @openapi
  * /api/utilisateur:
@@ -12,6 +39,8 @@ const router = express.Router();
  *     operationId: listUtilisateurs
  *     tags:
  *       - utilisateur
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Liste des profils
@@ -38,7 +67,7 @@ const router = express.Router();
  *                   email:
  *                     type: string
  *                     format: email
- *                     example: "john.doe@example.com"
+ *                     example: "john.doe@gmail.com"
  *                   date_naissance:
  *                     type: string
  *                     format: date
@@ -72,6 +101,8 @@ const router = express.Router();
  *     operationId: createUtilisateur
  *     tags:
  *       - utilisateur
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -79,13 +110,9 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - id
  *               - email
+ *               - password
  *             properties:
- *               id:
- *                 type: string
- *                 format: uuid
- *                 example: "550e8400-e29b-41d4-a716-446655440000"
  *               prenom:
  *                 type: string
  *                 example: "John"
@@ -96,6 +123,10 @@ const router = express.Router();
  *                 type: string
  *                 format: email
  *                 example: "john.doe@example.com"
+ *               password:
+ *                 type: string
+ *                 minLength: 6
+ *                 example: "motdepasse123"
  *               date_naissance:
  *                 type: string
  *                 format: date
@@ -154,6 +185,9 @@ const router = express.Router();
  *                 error:
  *                   type: string
  */
+// Appliquer l'authentification à toutes les routes
+router.use(authenticateToken);
+
 router.get('/', async (req, res) => {
   if (!supabase) return res.status(500).json({ error: 'Supabase non configuré' });
   const { data, error } = await supabase.from('utilisateur').select('*');
@@ -165,15 +199,38 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   if (!supabase) return res.status(500).json({ error: 'Supabase non configuré' });
-  const { id, prenom, nom, ...rest } = req.body || {};
+  const { email, password, prenom, nom, date_naissance, bio, preferences } = req.body || {};
+
+  const { data: authUser, error: authError } = await supabase.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true
+  });
+
+  if (authError) {
+    return res.status(400).json({ error: authError.message });
+  }
+
+  const id = authUser.user.id;
+
   const { data, error } = await supabase
     .from('utilisateur')
-    .insert({ id, prenom, nom, ...rest })
+    .upsert({
+      id,
+      email,
+      prenom: prenom ?? null,
+      nom: nom ?? null,
+      date_naissance: date_naissance ?? null,
+      bio: bio ?? null,
+      preferences: preferences ?? null
+    })
     .select('*')
     .single();
+
   if (error) {
     return res.status(400).json({ error: error.message });
   }
+
   res.status(201).json(data);
 });
 
@@ -186,6 +243,8 @@ router.post('/', async (req, res) => {
  *     operationId: getUtilisateurById
  *     tags:
  *       - utilisateur
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -228,10 +287,12 @@ router.post('/', async (req, res) => {
  *         description: Erreur interne du serveur
  *   put:
  *     summary: Met à jour un profil
- *     description: Met à jour les informations du profil utilisateur correspondant à l'identifiant fourni. Si l'utilisateur n'existe pas, il sera créé (upsert).
+ *     description: Met à jour les informations du profil utilisateur correspondant à l'identifiant fourni. Seuls les administrateurs peuvent modifier d'autres profils, ou l'utilisateur peut modifier son propre profil.
  *     operationId: updateUtilisateur
  *     tags:
  *       - utilisateur
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -262,18 +323,22 @@ router.post('/', async (req, res) => {
  *     responses:
  *       200:
  *         description: Profil mis à jour
- *       201:
- *         description: Profil créé suite à un upsert
  *       400:
  *         description: Erreur de validation ou de mise à jour
+ *       403:
+ *         description: Accès refusé - seuls les administrateurs peuvent modifier d'autres profils
+ *       404:
+ *         description: Profil introuvable
  *       500:
  *         description: Erreur interne du serveur
  *   delete:
  *     summary: Supprime un profil
- *     description: Supprime le profil utilisateur correspondant à l'identifiant fourni.
+ *     description: Supprime le profil utilisateur correspondant à l'identifiant fourni. Seuls les administrateurs peuvent supprimer d'autres profils, ou l'utilisateur peut supprimer son propre profil.
  *     operationId: deleteUtilisateur
  *     tags:
  *       - utilisateur
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -286,6 +351,8 @@ router.post('/', async (req, res) => {
  *         description: Profil supprimé avec succès, aucune réponse retournée.
  *       400:
  *         description: Erreur lors de la suppression
+ *       403:
+ *         description: Accès refusé - seuls les administrateurs peuvent supprimer d'autres profils
  *       500:
  *         description: Erreur interne du serveur
  */
@@ -309,48 +376,62 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   if (!supabase) return res.status(500).json({ error: 'Supabase non configuré' });
   const { id } = req.params;
+  const currentUserId = req.user.id;
+  
+  // Vérifier si l'utilisateur peut modifier ce profil (admin ou son propre compte)
+  if (id !== currentUserId) {
+    // Vérifier si l'utilisateur actuel est admin
+    const { data: currentUser, error: currentUserError } = await supabase
+      .from('utilisateur')
+      .select('is_admin')
+      .eq('id', currentUserId)
+      .single();
+    
+    if (currentUserError || !currentUser?.is_admin) {
+      return res.status(403).json({ error: 'Accès refusé : seuls les administrateurs peuvent modifier d\'autres profils' });
+    }
+  }
+  
   const updates = req.body || {};
+  
+  // Mettre à jour le profil existant
   const { data: updated, error: updateError } = await supabase
     .from('utilisateur')
     .update(updates)
     .eq('id', id)
     .select('*')
-    .maybeSingle();
+    .single();
 
   if (updateError) {
     return res.status(400).json({ error: updateError.message });
   }
 
-  if (updated) {
-    return res.json(updated);
+  if (!updated) {
+    return res.status(404).json({ error: 'Profil introuvable' });
   }
 
-  const { data: userAdmin, error: adminError } = await supabase.auth.admin.getUserById(id);
-  if (adminError) {
-    return res.status(400).json({ error: `Impossible de récupérer l'email: ${adminError.message}` });
-  }
-  const email = userAdmin?.user?.email;
-  if (!email) {
-    return res.status(400).json({ error: "Email introuvable pour cet utilisateur" });
-  }
-
-  const toInsert = { id, email, ...updates };
-  const { data: created, error: insertError } = await supabase
-    .from('utilisateur')
-    .insert(toInsert)
-    .select('*')
-    .single();
-
-  if (insertError) {
-    return res.status(400).json({ error: insertError.message });
-  }
-
-  return res.status(201).json(created);
+  return res.json(updated);
 });
 
 router.delete('/:id', async (req, res) => {
   if (!supabase) return res.status(500).json({ error: 'Supabase non configuré' });
   const { id } = req.params;
+  const currentUserId = req.user.id;
+  
+  // Vérifier si l'utilisateur peut supprimer ce profil (admin ou son propre compte)
+  if (id !== currentUserId) {
+    // Vérifier si l'utilisateur actuel est admin
+    const { data: currentUser, error: currentUserError } = await supabase
+      .from('utilisateur')
+      .select('is_admin')
+      .eq('id', currentUserId)
+      .single();
+    
+    if (currentUserError || !currentUser?.is_admin) {
+      return res.status(403).json({ error: 'Accès refusé : seuls les administrateurs peuvent supprimer d\'autres profils' });
+    }
+  }
+  
   const { error } = await supabase
     .from('utilisateur')
     .delete()

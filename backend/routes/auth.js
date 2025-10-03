@@ -31,6 +31,7 @@ const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supa
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: "john.doe@gmail.com"
  *               redirectTo:
  *                 type: string
  *                 description: URL de redirection après connexion
@@ -70,7 +71,9 @@ router.post('/magic-link', async (req, res) => {
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: "john.doe@gmail.com"
  *               password:
+ *                 minLength: 6
  *                 type: string
  *     responses:
  *       200:
@@ -104,8 +107,10 @@ router.post('/sign-in', async (req, res) => {
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: "john.doe@gmail.com"
  *               password:
  *                 type: string
+ *                 minLength: 6
  *     responses:
  *       200:
  *         description: Utilisateur créé (vérification email possible)
