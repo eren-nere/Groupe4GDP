@@ -7,6 +7,7 @@ const swaggerJsdoc = require('swagger-jsdoc');
 const { utilisateurRouter } = require('./routes/utilisateur');
 const { authRouter } = require('./routes/auth');
 const { annonceRouter } = require('./routes/annonce');
+const { adresseRouter } = require('./routes/adresse');
 
 const app = express();
 
@@ -51,6 +52,8 @@ app.get('/health', (req, res) => {
 app.use('/api/utilisateur', utilisateurRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/annonce', annonceRouter);
+app.use('/api/adresse', adresseRouter);
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`API server running on port ${PORT}`);
