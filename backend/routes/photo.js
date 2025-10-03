@@ -1,32 +1,29 @@
 const express = require('express');
 const { supabase } = require('../supabaseClient');
+const multer = require('multer');
 
 const router = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 
-// Middleware d'authentification
+// Middleware auth
 const authenticateToken = async (req, res, next) => {
-  if (!supabase) {
-    return res.status(500).json({ error: 'Supabase non configuré' });
-  }
+  if (!supabase) return res.status(500).json({ error: 'Supabase non configuré' });
 
   const auth = req.headers.authorization || '';
   const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
-
-  if (!token) {
-    return res.status(401).json({ error: 'Token d\'authentification manquant' });
-  }
+  if (!token) return res.status(401).json({ error: 'Token manquant' });
 
   try {
     const { data, error } = await supabase.auth.getUser(token);
-    if (error) {
-      return res.status(401).json({ error: 'Token invalide: ' + error.message });
-    }
+    if (error) return res.status(401).json({ error: 'Token invalide: ' + error.message });
     req.user = data.user;
     next();
-  } catch (err) {
-    return res.status(401).json({ error: 'Erreur de vérification du token' });
+  } catch {
+    return res.status(401).json({ error: 'Erreur vérification token' });
   }
 };
+
+router.use(authenticateToken);
 
 /**
  * @openapi
@@ -41,7 +38,85 @@ const authenticateToken = async (req, res, next) => {
  *       200:
  *         description: Liste des photos
  *   post:
- *     summary: Ajoute une photo
+ *     summary: Upload une photo (profil ou annonce) et enregistre en DB
+ *     tags:
+ *       - photo
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *               annonce_id:
+ *                 type: integer
+ *                 description: ID de l'annonce (laisser vide si photo de profil)
+ *               type:
+ *                 type: string
+ *                 enum: ["Logement", "Profil"]
+ *                 example: "Profil"
+ *     responses:
+ *       201:
+ *         description: Photo uploadée et enregistrée
+ */
+
+/**
+ * @openapi
+ * /api/photo/annonce/{id}:
+ *   get:
+ *     summary: Récupère toutes les photos d'une annonce
+ *     tags:
+ *       - photo
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Liste des photos de l'annonce
+ */
+
+/**
+ * @openapi
+ * /api/photo/user/{id}:
+ *   get:
+ *     summary: Récupère la photo de profil d'un utilisateur
+ *     tags:
+ *       - photo
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: Photo(s) de profil
+ */
+
+/**
+ * @openapi
+ * /api/photo/{id}:
+ *   get:
+ *     summary: Récupère une photo par id
+ *     tags:
+ *       - photo
+ *     security:
+ *       - bearerAuth: []
+ *   put:
+ *     summary: Met à jour les métadonnées d'une photo
  *     tags:
  *       - photo
  *     security:
@@ -52,23 +127,18 @@ const authenticateToken = async (req, res, next) => {
  *         application/json:
  *           schema:
  *             type: object
- *             required:
- *               - annonce_id
- *               - url
- *               - type
  *             properties:
- *               annonce_id:
- *                 type: integer
- *               url:
- *                 type: string
  *               type:
  *                 type: string
- *                 example: "Principale"
- *     responses:
- *       201:
- *         description: Photo créée
+ *               annonce_id:
+ *                 type: integer
+ *   delete:
+ *     summary: Supprime une photo (DB + bucket)
+ *     tags:
+ *       - photo
+ *     security:
+ *       - bearerAuth: []
  */
-router.use(authenticateToken);
 
 router.get('/', async (req, res) => {
   const { data, error } = await supabase.from('photo').select('*');
@@ -76,16 +146,60 @@ router.get('/', async (req, res) => {
   res.json(data);
 });
 
-router.post('/', async (req, res) => {
-  const { annonce_id, url, type } = req.body || {};
+router.get('/annonce/:id', async (req, res) => {
+  const { id } = req.params;
+  const { data, error } = await supabase.from('photo').select('*').eq('annonce_id', id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+
+router.get('/user/:id', async (req, res) => {
+  const { id } = req.params;
+  const { data, error } = await supabase.from('photo').select('*').eq('user_id', id);
+  if (error) return res.status(500).json({ error: error.message });
+  res.json(data);
+});
+
+router.post('/', upload.single('file'), async (req, res) => {
+  const { annonce_id, type } = req.body;
+  
+  if (!req.file) return res.status(400).json({ error: 'Fichier manquant' });
+  
+  // Validation du type
+  const validTypes = ['Logement', 'Profil'];
+  if (type && !validTypes.includes(type)) {
+    return res.status(400).json({ error: 'Type doit être "Logement" ou "Profil"' });
+  }
+  
+  // Si annonce_id est fourni, vérifier qu'elle existe
+  if (annonce_id) {
+    const { data: annonce, error: annonceError } = await supabase
+      .from('annonce')
+      .select('id')
+      .eq('id', annonce_id)
+      .single();
+    
+    if (annonceError || !annonce) {
+      return res.status(400).json({ error: 'Annonce introuvable' });
+    }
+  }
+
+  const fileName = `${req.user.id}/${Date.now()}-${req.file.originalname}`;
+  const { error: uploadError } = await supabase.storage
+    .from('photos')
+    .upload(fileName, req.file.buffer, { contentType: req.file.mimetype });
+
+  if (uploadError) return res.status(400).json({ error: uploadError.message });
+
+  const { data: { publicUrl } } = supabase.storage.from('photos').getPublicUrl(fileName);
 
   const { data, error } = await supabase
     .from('photo')
     .insert({
-      annonce_id,
-      user_id: req.user.id,
-      url,
-      type
+      annonce_id: annonce_id || null,
+      user_id: annonce_id ? null : req.user.id,
+      url: publicUrl,
+      type: type || (annonce_id ? 'Logement' : 'Profil'),
     })
     .select('*')
     .single();
@@ -94,22 +208,6 @@ router.post('/', async (req, res) => {
   res.status(201).json(data);
 });
 
-/**
- * @openapi
- * /api/photo/{id}:
- *   get:
- *     summary: Récupère une photo par id
- *     tags:
- *       - photo
- *   put:
- *     summary: Met à jour une photo
- *     tags:
- *       - photo
- *   delete:
- *     summary: Supprime une photo
- *     tags:
- *       - photo
- */
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const { data, error } = await supabase.from('photo').select('*').eq('id', id).single();
@@ -119,8 +217,8 @@ router.get('/:id', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const { id } = req.params;
+  const updates = req.body || {};
 
-  // Vérification propriétaire ou admin
   const { data: photo, error: photoError } = await supabase.from('photo').select('user_id').eq('id', id).single();
   if (photoError || !photo) return res.status(404).json({ error: 'Photo introuvable' });
 
@@ -129,7 +227,6 @@ router.put('/:id', async (req, res) => {
     if (!currentUser?.is_admin) return res.status(403).json({ error: 'Accès refusé' });
   }
 
-  const updates = req.body || {};
   const { data, error } = await supabase.from('photo').update(updates).eq('id', id).select('*').single();
   if (error) return res.status(400).json({ error: error.message });
   res.json(data);
@@ -138,12 +235,17 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   const { id } = req.params;
 
-  const { data: photo, error: photoError } = await supabase.from('photo').select('user_id').eq('id', id).single();
+  const { data: photo, error: photoError } = await supabase.from('photo').select('*').eq('id', id).single();
   if (photoError || !photo) return res.status(404).json({ error: 'Photo introuvable' });
 
   if (photo.user_id !== req.user.id) {
     const { data: currentUser } = await supabase.from('utilisateur').select('is_admin').eq('id', req.user.id).single();
     if (!currentUser?.is_admin) return res.status(403).json({ error: 'Accès refusé' });
+  }
+
+  const filePath = photo.url.split('/photos/')[1];
+  if (filePath) {
+    await supabase.storage.from('photos').remove([filePath]);
   }
 
   const { error } = await supabase.from('photo').delete().eq('id', id);
