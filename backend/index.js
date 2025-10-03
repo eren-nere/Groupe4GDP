@@ -10,6 +10,7 @@ const { annonceRouter } = require('./routes/annonce');
 const { adresseRouter } = require('./routes/adresse');
 const { reservationRouter } = require('./routes/reservation');
 const { messageRouter } = require('./routes/message');
+const { evaluationRouter } = require('./routes/evaluation');
 
 const app = express();
 
@@ -57,6 +58,7 @@ app.use('/api/annonce', annonceRouter);
 app.use('/api/adresse', adresseRouter);
 app.use('/api/reservation', reservationRouter);
 app.use('/api/message', messageRouter);
+app.use('/api/evaluation', evaluationRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
