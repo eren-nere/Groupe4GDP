@@ -152,6 +152,32 @@ router.get('/user', async (req, res) => {
 
 /**
  * @openapi
+ * /api/auth/session:
+ *   get:
+ *     summary: Récupère la session courante via Bearer token
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Session valide
+ *       401:
+ *         description: Non autorisé / Token invalide
+ */
+router.get('/session', async (req, res) => {
+  if (!supabase) return res.status(500).json({ error: 'Supabase non configuré' });
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+  if (!token) return res.status(401).json({ error: 'Token manquant' });
+
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error) return res.status(401).json({ error: error.message });
+
+  return res.json({ user, access_token: token });
+});
+
+/**
+ * @openapi
  * /api/auth/sign-out:
  *   post:
  *     summary: Déconnexion (stateless côté serveur)

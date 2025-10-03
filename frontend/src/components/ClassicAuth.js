@@ -143,6 +143,18 @@ const ClassicAuth = ({ session, profile, loading, isProfileComplete, updateProfi
     }
   }, [profile]);
 
+  // Vérifier si un token est déjà en localStorage au démarrage et récupérer la session
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      api.getSession(token).then((session) => {
+        console.log('Session récupérée au démarrage:', session);
+      }).catch((err) => {
+        console.error('Erreur lors de la récupération de la session:', err);
+      });
+    }
+  }, []);
+
   // Créer ou mettre à jour le profil utilisateur
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -179,6 +191,8 @@ const ClassicAuth = ({ session, profile, loading, isProfileComplete, updateProfi
         const accessToken = data?.session?.access_token || data?.access_token;
         if (accessToken) {
           localStorage.setItem('access_token', accessToken);
+          const session = await api.getSession(accessToken);
+          console.log('Session après connexion:', session);
         }
         setMessage('Connexion réussie !');
       }
