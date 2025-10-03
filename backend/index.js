@@ -8,6 +8,8 @@ const { utilisateurRouter } = require('./routes/utilisateur');
 const { authRouter } = require('./routes/auth');
 const { annonceRouter } = require('./routes/annonce');
 const { adresseRouter } = require('./routes/adresse');
+const { reservationRouter } = require('./routes/reservation');
+const { messageRouter } = require('./routes/message');
 
 const app = express();
 
@@ -53,6 +55,8 @@ app.use('/api/utilisateur', utilisateurRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/annonce', annonceRouter);
 app.use('/api/adresse', adresseRouter);
+app.use('/api/reservation', reservationRouter);
+app.use('/api/message', messageRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
