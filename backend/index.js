@@ -11,6 +11,7 @@ const { adresseRouter } = require('./routes/adresse');
 const { reservationRouter } = require('./routes/reservation');
 const { messageRouter } = require('./routes/message');
 const { evaluationRouter } = require('./routes/evaluation');
+const { photoRouter } = require('./routes/photo');
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.use('/api/adresse', adresseRouter);
 app.use('/api/reservation', reservationRouter);
 app.use('/api/message', messageRouter);
 app.use('/api/evaluation', evaluationRouter);
+app.use('/api/photo', photoRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
