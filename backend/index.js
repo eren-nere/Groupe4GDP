@@ -4,7 +4,7 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
-const { profilesRouter } = require('./routes/profiles');
+const { utilisateurRouter } = require('./routes/utilisateur');
 const { authRouter } = require('./routes/auth');
 
 const app = express();
@@ -47,7 +47,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.use('/api/profiles', profilesRouter);
+app.use('/api/utilisateur', utilisateurRouter);
 app.use('/api/auth', authRouter);
 
 const PORT = process.env.PORT || 3001;
