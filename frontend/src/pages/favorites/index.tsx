@@ -17,7 +17,7 @@ const FavoritesPage = () => {
   const [viewType, setViewType] = useState<'list' | 'map'>('list');
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', gap: '20px' }}>
       <TextField
         size="small"
         placeholder="Recherche des announces favories"
@@ -26,10 +26,10 @@ const FavoritesPage = () => {
             startAdornment: <SearchIcon />,
           },
         }}
+        sx={{
+          backgroundColor: '#FFF',
+        }}
       />
-      <Typography variant="h5" sx={{ mt: 2, mb: 2 }}>
-        Favoris
-      </Typography>
       <ToggleButtonGroup
         value={viewType}
         exclusive
@@ -42,10 +42,12 @@ const FavoritesPage = () => {
           <Typography>Liste</Typography>
         </ToggleButton>
         <ToggleButton value="map" aria-label="centered" fullWidth>
-          <Typography>Map</Typography>
+          <Typography>Carte</Typography>
         </ToggleButton>
       </ToggleButtonGroup>
-
+      <Typography variant="h5">
+        Favoris
+      </Typography>
       {viewType === 'map' ? (
         <Box display="flex" height="60vh" marginTop="20px">
           <APIProvider apiKey={API_KEY}>

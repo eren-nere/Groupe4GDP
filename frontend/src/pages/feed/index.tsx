@@ -44,7 +44,7 @@ const FeedPage = () => {
           <Typography>Liste</Typography>
         </ToggleButton>
         <ToggleButton value="map" aria-label="centered" fullWidth>
-          <Typography>Map</Typography>
+          <Typography>Carte</Typography>
         </ToggleButton>
       </ToggleButtonGroup>
 
