@@ -110,7 +110,7 @@ const MessagesPage = () => {
                 <img
                   src={msg.avatar}
                   style={{
-                    width: '60px',
+                    height: '60px',
                     borderRadius: '50%',
                     backgroundClip: 'content-box',
                   }}

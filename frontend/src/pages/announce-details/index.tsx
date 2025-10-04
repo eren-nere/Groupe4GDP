@@ -115,7 +115,8 @@ const AnnounceDetails = () => {
           <img
             src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQq2q83JcZgPQfNlAnwAJkBJ-eS9OK7UUzJ5Q&s"
             style={{
-              width: '70px',
+              height: '70px',
+              aspectRatio: '1',
               borderRadius: '50%',
               backgroundClip: 'content-box',
             }}
@@ -151,7 +152,7 @@ const AnnounceDetails = () => {
         variant="contained"
         color="primary"
         fullWidth
-        sx={{ marginTop: '16px' }}
+        sx={{ marginY: '16px' }}
       >
         Demander réservation
       </Button>

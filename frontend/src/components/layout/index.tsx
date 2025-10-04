@@ -5,7 +5,6 @@ import {
   BottomNavigationAction,
   Box,
   Paper,
-  Typography,
 } from '@mui/material';
 
 import {
