@@ -27,7 +27,7 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: process.env.API_BASE_URL || 'http://localhost:3001',
+      url: process.env.API_BASE_URL || 'https://groupe4gdp.onrender.com',
     },
   ],
   components: {
