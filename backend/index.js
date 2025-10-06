@@ -21,9 +21,9 @@ app.use(express.json());
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'EtuLoge API',
+    title: 'StudySwap API',
     version: '1.0.0',
-    description: 'API pour EtuLoge',
+    description: 'API pour StudySwap',
   },
   servers: [
     {
