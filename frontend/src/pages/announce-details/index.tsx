@@ -20,11 +20,7 @@ const AnnounceDetails = () => {
   const navigate = useNavigate();
 
   return (
-    <div
-      style={{
-        marginBottom: '50px',
-      }}
-    >
+    <div>
       <AppBar
         position="absolute"
         sx={{ backgroundColor: '#FFF', color: '#000' }}
@@ -156,7 +152,7 @@ const AnnounceDetails = () => {
         variant="contained"
         color="primary"
         fullWidth
-        sx={{ marginY: '16px' }}
+        sx={{ marginY: '16px', marginBottom: "100px" }}
       >
         Demander réservation
       </Button>
