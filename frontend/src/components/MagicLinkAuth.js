@@ -150,7 +150,21 @@ const MagicLinkAuth = ({ session, profile, loading, isProfileComplete, updatePro
     }
   };
   
-
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (!token) return;
+  
+    api.getSession(token)
+      .then((session) => {
+        console.log("Session récupérée:", session);
+        if (session.access_token) {
+          localStorage.setItem("access_token", session.access_token);
+        }
+      })
+      .catch((err) => {
+        console.error("Erreur récupération session:", err);
+      });
+  }, []);
 
   return (
     <>
