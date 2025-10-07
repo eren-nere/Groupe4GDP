@@ -34,7 +34,7 @@ const Layout = () => {
       {
         label: 'Ajouter',
         icon: <AddCircleOutline />,
-        to: 'add',
+        to: 'announce-creation',
       },
       {
         label: 'Messages',
