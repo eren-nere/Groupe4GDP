@@ -20,7 +20,11 @@ const AnnounceDetails = () => {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <div
+      style={{
+        marginBottom: '50px',
+      }}
+    >
       <AppBar
         position="absolute"
         sx={{ backgroundColor: '#FFF', color: '#000' }}
