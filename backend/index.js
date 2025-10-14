@@ -4,8 +4,14 @@ const cors = require('cors');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
-const { profilesRouter } = require('./routes/profiles');
+const { utilisateurRouter } = require('./routes/utilisateur');
 const { authRouter } = require('./routes/auth');
+const { annonceRouter } = require('./routes/annonce');
+const { adresseRouter } = require('./routes/adresse');
+const { reservationRouter } = require('./routes/reservation');
+const { messageRouter } = require('./routes/message');
+const { evaluationRouter } = require('./routes/evaluation');
+const { photoRouter } = require('./routes/photo');
 
 const app = express();
 
@@ -15,13 +21,13 @@ app.use(express.json());
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
-    title: 'EtuLoge API',
+    title: 'StudySwap API',
     version: '1.0.0',
-    description: 'API pour EtuLoge',
+    description: 'API pour StudySwap',
   },
   servers: [
     {
-      url: process.env.API_BASE_URL || 'http://localhost:3001',
+      url: process.env.API_BASE_URL || 'https://groupe4gdp.onrender.com',
     },
   ],
   components: {
@@ -47,8 +53,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-app.use('/api/profiles', profilesRouter);
+app.use('/api/utilisateur', utilisateurRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/annonce', annonceRouter);
+app.use('/api/adresse', adresseRouter);
+app.use('/api/reservation', reservationRouter);
+app.use('/api/message', messageRouter);
+app.use('/api/evaluation', evaluationRouter);
+app.use('/api/photo', photoRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

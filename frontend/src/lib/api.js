@@ -53,40 +53,57 @@ export const api = {
     return handleResponse(res);
   },
   async listProfiles() {
-    const res = await fetch(`${BASE_URL}/api/profiles`);
+    const token = localStorage.getItem('access_token');
+    const res = await fetch(`${BASE_URL}/api/utilisateur`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return handleResponse(res);
   },
 
   async getProfile(id) {
-    const res = await fetch(`${BASE_URL}/api/profiles/${encodeURIComponent(id)}`);
+    const token = localStorage.getItem('access_token');
+    const res = await fetch(`${BASE_URL}/api/utilisateur/${encodeURIComponent(id)}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     return handleResponse(res);
   },
 
   async createProfile(payload) {
-    const res = await fetch(`${BASE_URL}/api/profiles`, {
+    const token = localStorage.getItem('access_token');
+    const res = await fetch(`${BASE_URL}/api/utilisateur`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(payload),
     });
     return handleResponse(res);
   },
 
   async updateProfile(id, payload) {
-    const res = await fetch(`${BASE_URL}/api/profiles/${encodeURIComponent(id)}`, {
+    const token = localStorage.getItem('access_token');
+    const res = await fetch(`${BASE_URL}/api/utilisateur/${encodeURIComponent(id)}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify(payload),
     });
     return handleResponse(res);
   },
 
   async deleteProfile(id) {
-    const res = await fetch(`${BASE_URL}/api/profiles/${encodeURIComponent(id)}`, {
+    const token = localStorage.getItem('access_token');
+    const res = await fetch(`${BASE_URL}/api/utilisateur/${encodeURIComponent(id)}`, {
       method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
     });
     if (res.status === 204) return true;
     return handleResponse(res);
   },
+
+  async getSession(accessToken) {
+    const res = await fetch(`${BASE_URL}/api/auth/session`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    return handleResponse(res);
+  }
 };
 
 

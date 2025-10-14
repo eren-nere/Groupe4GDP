@@ -31,6 +31,7 @@ const supabase = supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supa
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: "john.doe@gmail.com"
  *               redirectTo:
  *                 type: string
  *                 description: URL de redirection après connexion
@@ -70,7 +71,9 @@ router.post('/magic-link', async (req, res) => {
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: "john.doe@gmail.com"
  *               password:
+ *                 minLength: 6
  *                 type: string
  *     responses:
  *       200:
@@ -104,8 +107,10 @@ router.post('/sign-in', async (req, res) => {
  *               email:
  *                 type: string
  *                 format: email
+ *                 example: "john.doe@gmail.com"
  *               password:
  *                 type: string
+ *                 minLength: 6
  *     responses:
  *       200:
  *         description: Utilisateur créé (vérification email possible)
@@ -143,6 +148,32 @@ router.get('/user', async (req, res) => {
   const { data, error } = await supabase.auth.getUser(token);
   if (error) return res.status(401).json({ error: error.message });
   return res.json(data);
+});
+
+/**
+ * @openapi
+ * /api/auth/session:
+ *   get:
+ *     summary: Récupère la session courante via Bearer token
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Session valide
+ *       401:
+ *         description: Non autorisé / Token invalide
+ */
+router.get('/session', async (req, res) => {
+  if (!supabase) return res.status(500).json({ error: 'Supabase non configuré' });
+  const auth = req.headers.authorization || '';
+  const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
+  if (!token) return res.status(401).json({ error: 'Token manquant' });
+
+  const { data: { user }, error } = await supabase.auth.getUser(token);
+  if (error) return res.status(401).json({ error: error.message });
+
+  return res.json({ user, access_token: token });
 });
 
 /**

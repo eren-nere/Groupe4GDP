@@ -27,10 +27,13 @@ function App() {
       const token = localStorage.getItem('access_token');
       if (token) {
         try {
-          const userData = await api.getUser(token);
-          const userId = userData?.user?.id;
-          setSession({ access_token: token, user: userData?.user });
-          if (userId) await fetchProfile(userId);
+          const sessionData = await api.getSession(token);
+          const userId = sessionData?.user?.id;
+          setSession(sessionData);
+          if (userId) {
+            localStorage.setItem('access_token', sessionData.access_token);
+            fetchProfile(userId);
+          }
         } catch (e) {
           localStorage.removeItem('access_token');
           setSession(null);
@@ -44,6 +47,11 @@ function App() {
   }, []);
 
   const fetchProfile = async (userId) => {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      console.warn('Pas de token encore disponible');
+      return;
+    }
     try {
       const data = await api.getProfile(userId);
       setProfile(data);
